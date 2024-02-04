@@ -8,3 +8,5 @@ sqlalchemy
 langchain
 langchain-experimental
 langchain-openai
+openpyxl
+pyarrow

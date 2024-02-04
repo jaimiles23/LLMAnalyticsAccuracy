@@ -1,8 +1,14 @@
-- use dynamic directories
-- get working
+TODO:
+- get dataframe of top 5 results for FDIC table?
+- create sample dataset:
+	- simple where
+	- join where
+- Revise proposal
+- resubmit
 
-Then separate solutions for saving: 
-- SQL Queries:
-	- save results for basic SQL
-- LLM Queries:
-	- Save results for basic LLM queries
+
+
+TODO:
+- make dates in same format... in database?
+- try to make LLM sql query more robust:
+	- iterate through elements backwards until has SELECT & FROM.

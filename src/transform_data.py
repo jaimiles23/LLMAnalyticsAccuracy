@@ -26,8 +26,8 @@ except ModuleNotFoundError:
 def drop_transform_tables(engine: object):
     """Drops transformation tables for reset"""
     logging.info("Dropping transformation tables for reset")
-    database_funcs.helper_read_exec_sql_file(c.FN_SQL_CREATE_TBL_PROFILES, engine)
-    database_funcs.helper_read_exec_sql_file(c.FN_SQL_CREATE_TBL_PROFILES, engine)
+    database_funcs.helper_exec_sql_file(c.FN_SQL_CREATE_TBL_PROFILES, engine)
+    database_funcs.helper_exec_sql_file(c.FN_SQL_CREATE_TBL_PROFILES, engine)
     return
 
 
@@ -38,35 +38,35 @@ def create_transformed_tables(engine: object):
 
     if not HAS_PROFILES_TBL:
         logging.info(f"Creating {c.DB_DW_TBL_PROFILES} Table")
-        database_funcs.helper_read_exec_sql_file(c.FN_SQL_CREATE_TBL_PROFILES, engine)
+        database_funcs.helper_exec_sql_file(c.FN_SQL_CREATE_TBL_PROFILES, engine)
     
     if not HAS_MONEY_TBL:
         logging.info(f"Creating {c.DB_DW_TBL_MONEY} Table")
-        database_funcs.helper_read_exec_sql_file(c.FN_SQL_CREATE_TBL_MONEY, engine)
+        database_funcs.helper_exec_sql_file(c.FN_SQL_CREATE_TBL_MONEY, engine)
     return
 
 
 def insert_new_profiles(engine: object):
     """Updates financial institution table."""
     logging.info("Inserting Transform Table")
-    database_funcs.helper_read_exec_sql_file(c.FN_INSERT_PROFILES_BANKS, engine)
-    database_funcs.helper_read_exec_sql_file(c.FN_INSERT_PROFILES_NCUA, engine)
+    database_funcs.helper_exec_sql_file(c.FN_INSERT_PROFILES_BANKS, engine)
+    database_funcs.helper_exec_sql_file(c.FN_INSERT_PROFILES_NCUA, engine)
     return
 
 
 def update_new_profiles(engine: object):
     """Updates financial institution table."""
     logging.info("Inserting Transform Table")
-    database_funcs.helper_read_exec_sql_file(c.FN_UPDATE_PROFILES_BANKS, engine)
-    database_funcs.helper_read_exec_sql_file(c.FN_UPDATE_PROFILES_NCUA, engine)
+    database_funcs.helper_exec_sql_file(c.FN_UPDATE_PROFILES_BANKS, engine)
+    database_funcs.helper_exec_sql_file(c.FN_UPDATE_PROFILES_NCUA, engine)
     return
 
 
 def insert_new_finances(engine: object):
     """Updates financial institution table."""
     logging.info("Inserting Transform Table")
-    database_funcs.helper_read_exec_sql_file(c.FN_INSERT_MONEY_BANKS, engine)
-    database_funcs.helper_read_exec_sql_file(c.FN_INSERT_MONEY_NCUA, engine)
+    database_funcs.helper_exec_sql_file(c.FN_INSERT_MONEY_BANKS, engine)
+    database_funcs.helper_exec_sql_file(c.FN_INSERT_MONEY_NCUA, engine)
     return
 
 

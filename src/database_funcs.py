@@ -37,7 +37,7 @@ def connect_db(name: str) -> object:
     db_connection_name = f'sqlite:///{name}'
     engine = create_engine(
         db_connection_name, 
-        echo=True
+        echo = False #True
         )
     # db_connection = engine.connect()   
     return engine
@@ -103,7 +103,7 @@ def get_last_update(engine: object, flag_dt: bool = True):
 # SQL Files
 ##########
 
-def helper_read_exec_sql_file(fn: str, engine: object) -> None:
+def helper_exec_sql_file(fn: str, engine: object) -> None:
     """Reads & Executes a SQL file"""
     with open(fn, 'r') as f_in:
         lines = f_in.read()
@@ -114,6 +114,7 @@ def helper_read_exec_sql_file(fn: str, engine: object) -> None:
         sql = text(sql_command)
         result = conn.execute(sql)
     return result
+
 
 ##########
 # Reset data 

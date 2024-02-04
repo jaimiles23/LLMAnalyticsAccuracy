@@ -47,7 +47,15 @@ def get_llm_db_chain():
         ]
     )
     llm = OpenAI(temperature=0, verbose=True, openai_api_key=OPEN_API_KEY)
-    db_chain = SQLDatabaseChain.from_llm(llm, db, verbose=True)
+    db_chain = SQLDatabaseChain.from_llm(
+        llm = llm,
+        db = db, 
+        verbose = False,  #True, 
+        return_intermediate_steps = True,
+        top_k = 1, 
+        query_checker_prompt = None, 
+        return_direct = True,
+    )
     return db_chain
 
 

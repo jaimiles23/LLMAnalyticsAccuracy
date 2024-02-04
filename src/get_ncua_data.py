@@ -85,6 +85,10 @@ def ingest_all_ncua_data(engine: object):
     """
     ##### Ingest NCUA Data
     logging.info("Ingesting NCUA Data")
+
+    ##### Setup dirs
+    if not os.path.exists(c.DIR_NCUA_DATA_PROCESSED):
+        os.makedirs(c.DIR_NCUA_DATA_PROCESSED)
    
     ##### Integrate all data
     files_to_process = get_all_ncua_files_to_process()

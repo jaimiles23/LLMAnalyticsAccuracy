@@ -37,7 +37,7 @@ def check_active_institutions_by_tier(engine:object, print_text:bool = True):
 
     TODO: not hard code this.    
     """
-    result = pd.DataFrame(database_funcs.helper_read_exec_sql_file(c.FN_BQ_ACTIVE_BY_ASSETS, engine).fetchall())
+    result = pd.DataFrame(database_funcs.helper_exec_sql_file(c.FN_BQ_ACTIVE_BY_ASSETS, engine).fetchall())
     msg = "Active institutions by tier"
 
     logging.debug(msg)
@@ -53,7 +53,7 @@ def check_declining_instituions(engine:object, print_text:bool = True):
     """
     Check institutions that declined in the last quarter
     """
-    result = pd.DataFrame(database_funcs.helper_read_exec_sql_file(c.FN_BQ_DECLINE_INST, engine).fetchall())
+    result = pd.DataFrame(database_funcs.helper_exec_sql_file(c.FN_BQ_DECLINE_INST, engine).fetchall())
     msg = "Declining Institutions"
 
     logging.debug(msg)

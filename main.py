@@ -56,12 +56,28 @@ def run_data_pipeline(reset: bool):
     transform_data.transform_fin_inst_data(engine, reset_transforms = False)
 
     ##### Check Business Result Queries
-    check_business_questions.check_all_business_questions(engine, print_text = True)
+    # check_business_questions.check_all_business_questions(engine, print_text = True)
 
     ### Wrapup
     completion_msg = f"Completed Pipeline in {time.time() - start_time}"
     logging.info(completion_msg)
     print(completion_msg)
+    return
+
+
+##########
+# Create test dataset
+##########
+
+
+
+##########
+# Interact with LLM
+##########
+def ask_llm_questions() -> None:
+    """Allows the user to interact with the LLM"""
+    db_chain = setup_llm.get_llm_db_chain()
+    setup_llm.ask_questions(db_chain)
     return
 
 
@@ -72,13 +88,12 @@ def run_data_pipeline(reset: bool):
 def main(reset: bool):
     """ Run data pipeline & LLM questions as needed"""
     run_data_pipeline(reset = reset)
-    db_chain = setup_llm.get_llm_db_chain()
+    ask_llm_questions()
     
-    setup_llm.ask_questions(db_chain)
     return
 
 
 if __name__ == "__main__":
-    reset = True
+    reset = False
     main(reset)
 
