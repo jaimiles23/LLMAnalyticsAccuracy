@@ -1,0 +1,6 @@
+﻿SELECT dw_financial_institution_profiles.institution_name, dw_financial_institution_money.total_assets
+FROM dw_financial_institution_profiles
+INNER JOIN dw_financial_institution_money ON dw_financial_institution_profiles.inst_id = dw_financial_institution_money.inst_id
+-- WHERE dw_financial_institution_money.year = 2024
+ORDER BY dw_financial_institution_money.total_assets DESC
+LIMIT 1;
