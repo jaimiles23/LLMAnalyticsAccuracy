@@ -1,0 +1,8 @@
+- use dynamic directories
+- get working
+
+Then separate solutions for saving: 
+- SQL Queries:
+	- save results for basic SQL
+- LLM Queries:
+	- Save results for basic LLM queries
