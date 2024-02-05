@@ -80,6 +80,8 @@ class SqlResults(testResults):
         
         if self.test_type == SqlResults.TEST_SIMPLE_WHERE:
             result = pd.to_datetime(result)
+        elif self.test_type == SqlResults.TEST_JOIN_MAX:
+            result = int(result) if result is not None else result
 
         return result
 
@@ -107,7 +109,7 @@ class LlmResults(testResults):
 
 
     def ask_llm(self):
-        """Asks the LLM a naturally generated question & saves query/result."""
+        """Asks the LLM question that mimics natural language. Then saves query & result."""
         # question = "What top 5 credit unions had the most total assets during quarter 3 in the year 2023"
         questions = {
             LlmResults.TEST_SIMPLE_WHERE: f"What was the last update for {self.entity_name}?", 
@@ -150,6 +152,8 @@ class LlmResults(testResults):
 
             self.result = pd.to_datetime(self.result)
         elif self.test_type == LlmResults.TEST_JOIN_MAX:
+                result = self.result[2: self.result.find(',')]
+                self.result =  int(result) if result != "None" else None
         return
 
 
@@ -195,7 +199,7 @@ def add_row_query_comparison(
         llm_info.result,
         int(sql_info.result == llm_info.result)
     ]
-    print(new_data)
+    # print(new_data)
     df.loc[len(df.index)] = new_data
     return df
 
@@ -230,7 +234,7 @@ def get_df_comparison(save_results: bool = True):
 
     for idx in range(len(test_institutions.index)):
         inst_name = test_institutions['institution_name'].iloc[idx]
-        print(inst_name)
+        # print(inst_name)
         df = add_sql_tests(df, inst_name)
 
     print(df.shape)
@@ -244,10 +248,9 @@ def get_df_comparison(save_results: bool = True):
 ##########
 def main():
     df = get_df_comparison()
-
     return 
-
 
 
 if __name__ == "__main__":
     main()
+
