@@ -88,12 +88,12 @@ def ask_llm_questions() -> None:
 def main(reset: bool):
     """ Run data pipeline & LLM questions as needed"""
     run_data_pipeline(reset = reset)
-    ask_llm_questions()
+    # ask_llm_questions()
     
     return
 
 
 if __name__ == "__main__":
-    reset = False
+    reset = True
     main(reset)
 

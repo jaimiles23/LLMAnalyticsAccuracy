@@ -1,14 +1,7 @@
 TODO:
-- get dataframe of top 5 results for FDIC table?
-- create sample dataset:
-	- simple where
-	- join where
-- Revise proposal
-- resubmit
+- Delta:
+	- no :(
+	- update PPT slides
+	- respond in slack timeline to add fellows
+		- any template email, or just do so?
 
-
-
-TODO:
-- make dates in same format... in database?
-- try to make LLM sql query more robust:
-	- iterate through elements backwards until has SELECT & FROM.

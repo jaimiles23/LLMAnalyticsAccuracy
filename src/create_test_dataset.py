@@ -27,8 +27,8 @@ try:
 except ModuleNotFoundError:
     import src.constants as c
     import src.logger as logger
-    import src.database_funcs
-    import src.setup_llm
+    import src.database_funcs as database_funcs
+    import src.setup_llm as setup_llm
 
 
 ##########
@@ -60,12 +60,12 @@ class SqlResults(testResults):
     def get_corresponding_query(self):
         """sets query of the object"""
         predefined_queries = {
-            SqlResults.TEST_SIMPLE_WHERE: f"SELECT last_update FROM dw_financial_institution_profiles AS p WHERE p.institution_name = '{self.entity_name}'", 
+            SqlResults.TEST_SIMPLE_WHERE: f'SELECT last_update FROM dw_financial_institution_profiles AS p WHERE p.institution_name = "{self.entity_name}"', 
             SqlResults.TEST_JOIN_MAX: f"""
                 SELECT max(total_assets) FROM dw_financial_institution_money AS m
                 LEFT JOIN dw_financial_institution_profiles AS p
                     ON p.inst_id = m.inst_id
-                WHERE p.institution_name = '{self.entity_name}'
+                WHERE p.institution_name = "{self.entity_name}"
                 """,
         }
         sql = predefined_queries[ self.test_type]
@@ -76,12 +76,22 @@ class SqlResults(testResults):
         """Returns self of the SQL query"""
         with SqlResults.ENGINE.begin() as conn:
             sql = text(self.query)
-            result = conn.execute(sql).fetchall()[0][0]
+            result = conn.execute(sql).fetchall()
+
+        if result == None or len(result) == 0:
+            return None
         
-        if self.test_type == SqlResults.TEST_SIMPLE_WHERE:
+        try:
+            result = result[0][0]
+        except:
+            print(result)
+            quit()
+        if result is None or result == 'None':
+            return None
+        elif self.test_type == SqlResults.TEST_SIMPLE_WHERE:
             result = pd.to_datetime(result)
         elif self.test_type == SqlResults.TEST_JOIN_MAX:
-            result = int(result) if result is not None else result
+            result = int(result)
 
         return result
 
@@ -117,12 +127,16 @@ class LlmResults(testResults):
         }
         
         question = questions[self.test_type]
-        result = LlmResults.DB_CHAIN.invoke(question)
+        self.user_query = question
 
-        self.user_query = result['query']
-        self.sql_query = SqlResults.clean_sql_query( result['intermediate_steps'][-2]['sql_cmd']) 
-             ## self.get_final_sql_step(result['intermediate_steps'])
-        self.result = result['result']
+        try:
+            result = LlmResults.DB_CHAIN.invoke(question)
+            self.sql_query = SqlResults.clean_sql_query( result['intermediate_steps'][-2]['sql_cmd']) 
+                ## self.get_final_sql_step(result['intermediate_steps'])
+            self.result = result['result']
+        except:
+            self.sql_query = "SQL Query failed"
+            self.result = None
         return
 
     ##### here incase we need to add back.
@@ -145,13 +159,15 @@ class LlmResults(testResults):
 
 
     def clean_result(self):
-        if self.test_type == LlmResults.TEST_SIMPLE_WHERE:
+        if self.result is None:
+            return
+        elif self.test_type == LlmResults.TEST_SIMPLE_WHERE:
             first_idx = self.result.find("'") + 1
             second_idx = self.result.find("'", first_idx)
             self.result = self.result[first_idx: second_idx]
 
             self.result = pd.to_datetime(self.result)
-        elif self.test_type == LlmResults.TEST_JOIN_MAX:
+        elif self.test_type == LlmResults.TEST_JOIN_MAX and self.result:
                 result = self.result[2: self.result.find(',')]
                 self.result =  int(result) if result != "None" else None
         return
@@ -223,34 +239,45 @@ def add_sql_tests(df: pd.DataFrame, entity_name: str) -> pd.DataFrame:
     return df
 
 
-def get_df_comparison(save_results: bool = True):
+def get_df_comparison():
     """Creates & saves the comparison dataset for """
     ##### Create Comparison Dataset
-    df = init_df_query_comparison()
-
+    
     ##### Get Institution Test List
     engine = database_funcs.connect_db(c.DB_NAME)
-    test_institutions = pd.read_sql_query("SELECT institution_name FROM dw_financial_institution_profiles LIMIT 10", engine)
+    sql_select = "SELECT institution_name FROM dw_financial_institution_profiles ORDER BY inst_id LIMIT 4000"
+    test_institutions = pd.read_sql_query(sql_select, engine)
 
-    for idx in range(len(test_institutions.index)):
-        inst_name = test_institutions['institution_name'].iloc[idx]
-        # print(inst_name)
-        df = add_sql_tests(df, inst_name)
+    BATCH_SIZE = 100
+    ROWS_TO_PROCESS = len(test_institutions.index)
+    processed = 0
 
-    print(df.shape)
-    if save_results: 
-        df.to_csv(c.FN_LLM_ACCURACY)
-    return df
+    while processed < ROWS_TO_PROCESS:
+        df = init_df_query_comparison()
+        increment =  min(ROWS_TO_PROCESS, processed + BATCH_SIZE)
+
+        for idx in range( processed, increment):
+            inst_name = test_institutions['institution_name'].iloc[idx]
+            df = add_sql_tests(df, inst_name)
+            
+        df.to_csv(
+            c.FN_LLM_ACCURACY, 
+            mode = 'a', 
+            header = True if processed == 0 else False
+            )
+        processed += BATCH_SIZE
+        print(f"Processed {processed} of {ROWS_TO_PROCESS}, {int( (100 * processed) / ROWS_TO_PROCESS)}%")
+
+    return
 
 
 ##########
 # Main
 ##########
 def main():
-    df = get_df_comparison()
+    get_df_comparison()
     return 
 
 
 if __name__ == "__main__":
     main()
-
