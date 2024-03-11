@@ -148,14 +148,14 @@ The pipeline is also available on Docker so you can reproduce and explore the da
 Ensure you have [docker installed](https://docs.docker.com/engine/install/). Then, run the following commands in your console:
 ```console
 user:~$docker run -it jaimiles23/fin_llm_accuracy:latest /bin/bash
+<!-- user:~$docker run -it llm_dir /bin/bash -->
+root@26e003b6a867:/app# python main.py
 ```
 
 
 **Note**: The .Dockerfile is also hosted on this repository. To build the docker image, run:
 ```console
 user:~$docker build -t llm_dir .
-user:~$docker run -it llm_dir /bin/bash
-root@26e003b6a867:/app# python main.py
 ```
 
 1. The data pipeline will take ~ 30 seconds to complete
