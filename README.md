@@ -16,6 +16,7 @@ An Large Language Models (LLMs) with good accuracy can be leveraged within an or
   - [Data Lineage](#data-lineage)
   - [Data Model](#data-model)
   - [Data Governance](#data-governance)
+- [Results](#results)
 - [Setup and Testing](#setup-and-testing)
   - [Local Clone](#local-clone)
   - [Docker Test](#docker-test)
@@ -110,6 +111,20 @@ db = SQLDatabase.from_uri(
     ]
 )
 ```
+
+# Results
+This study tests the results of the LLM across 2 query difficulties: simple and complex. These queries are programmatically generated via rows in the database. Reference the table below for a complete explanation of query difficulties
+
+Difficulty  |   Natural Language	  |    SQL Query
+---    |   ---      |   ---
+Simple/last_update   |  	What was the last update for Fleet Bank of Maine?   |  	SELECT last_update FROM dw_financial_institution_profiles AS p WHERE p.institution_name = Fleet Bank of Maine'
+Complex/join_max   |  	What is the maximum total assets Fleet Bank of Maine ever had?   |  	SELECT max(total_assets) FROM dw_financial_institution_money AS m LEFT JOIN w_financial_institution_profiles AS p ON p.inst_id = m.inst_id WHERE p.institution_name = 'Fleet Bank of Maine'
+
+Below is a contingency table showing the LLM's accuracy across difficulties:
+
+![LLMAccuracy1](https://raw.githubusercontent.com/jaimiles23/LLMAnalyticsAccuracy/main/lib/README%20Images/llm_accuracy1.png)
+
+![LLMAccuracy2](https://raw.githubusercontent.com/jaimiles23/LLMAnalyticsAccuracy/main/lib/README%20Images/llm_accuracy2.png)
 
 
 # Setup and Testing
