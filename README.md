@@ -1,43 +1,25 @@
-# Testing LLM Accuracy for Analytics
+# LLM Analytics Accuracy
 
-- [Testing LLM Accuracy for Analytics](#testing-llm-accuracy-for-analytics)
-- [About](#about)
-- [Setup](#setup)
-- [LLM Accuracy](#llm-accuracy)
+An Large Language Models (LLMs) with good accuracy can be leveraged within an organization to reduce technical development time, increase user access to data, and further data democracy (LangChain, 2023). LLMs are commonly evaluated by providing them test sets such as MMLU (Massive Multitask Language Understanding, n.d.) and assessing the LLM’s accuracy to predict correct answers (Papers with Code - MMLU Dataset, n.d.). This study investigates an LLM's accuracy when answering questions about a financial database. The repository
+1. Creates a data pipeline to populate a database with financial data
+2. Connects chatgpt-3.5 to the database
+3. Investigates the accuracy of the LLM vs traditional sql queries. 
+
+- [LLM Analytics Accuracy](#llm-analytics-accuracy)
 - [Data](#data)
   - [FDIC Data](#fdic-data)
   - [NCUA Data](#ncua-data)
-  - [Architectural Design](#architectural-design)
+- [Architecture](#architecture)
   - [Tech Stack](#tech-stack)
   - [Data Pipeline](#data-pipeline)
-    - [Data Lineage](#data-lineage)
-    - [Data Model](#data-model)
-    - [Data Governance](#data-governance)
-- [TODOs:](#todos)
+  - [Data Lineage](#data-lineage)
+  - [Data Model](#data-model)
+  - [Data Governance](#data-governance)
+- [Setup and Testing](#setup-and-testing)
+  - [Local Clone](#local-clone)
+  - [Docker Test](#docker-test)
+- [References](#references)
 
-
-# About
-- TODO: Insert finalized proposal.
-- 
-Include bit about business case being for consulting, & helping other organizations setup flexible NLP. 
-
-This project creates its own testing set of financial data set using an ELT data pipeline. Please refernece the [Data](#data) section for more information. 
-
-
-# Setup
-*note*: example commands for windows cmd
-
-1. Clone repo to local files
-2. Open CMD in cwd
-3. run: `python -m venv venv `
-4. run: `pip install -r requirements.txt`
-5. Update `constants.py` to use your system's absolute path
-6. Insert an openAI API Key into a "secrets.txt" file in the main folder
-7. run: `python -m main.py`
-
-
-# LLM Accuracy
-- TODO: add informaiton & graphics here
 
 
 # Data
@@ -53,7 +35,6 @@ This project ingests data from these two sources into a SQL database. The databa
 - State
 - Total Assets
 - Total Deposits
-
 **Note: total amounts are measured at the end of each calendar quarter**
 
 Both regulating organizations make their data publicly available:
@@ -90,7 +71,7 @@ Custom Query [here](https://webapps2.ncua.gov/CustomQuery/CUSelect.aspx)
 Then, drop the downloaded file into the directory: `data/Data_NCUA/data_to_process/`. After the pipeline ingests the data, it will move the file to `data/Data_NCUA/processed/`
 
 
-## Architectural Design
+# Architecture
 
 ## Tech Stack
 This data pipeline uses python and sqlite. 
@@ -100,24 +81,24 @@ This data pipeline uses python and sqlite.
 
 
 ## Data Pipeline
-This solution uses an ELT (Extract, Load, Transform) data pipeline. Generally, the pipeline:
+This solution uses an ELT (Extract, Load, Transform) data pipeline. The pipeline:
 1. Extracts publicly available data from regulator's websites.
 2. Loads the data into a database
 3. Transforms the data into normalized, appended tables.
 
 
-### Data Lineage
+## Data Lineage
 The diagram provides a conceptual organization of the data flow and data lineage.
 ![Data Lineage](https://raw.githubusercontent.com/jaimiles23/LLMAnalyticsAccuracy/main/lib/Data%20Goverance/DataLineage.drawio.png)
 
 
-### Data Model
+## Data Model
 Below is the data model for the transformed data from the data pipeline. Tables in the database are prefixed with "dw" to represent data warehouse. In a different database system, these tables might be stored in a different schema or an entirely different database.
 
 ![Data Model](https://raw.githubusercontent.com/jaimiles23/LLMAnalyticsAccuracy/main/lib/Data%20Goverance/DataModel.drawio.png)
 
 
-### Data Governance
+## Data Governance
 Note that all data presented here is publicly available and contains no PII. The LLM selected, `chat-gpt-3.5`, is only granted access to the finalized tables in our database. Thus, the data pipeline can be adjusted to ingest other data without making it accessible and potentially exposed via the LLM. This is specified by the `include_tables` keyword below.
 ```python
 db = SQLDatabase.from_uri(
@@ -129,10 +110,46 @@ db = SQLDatabase.from_uri(
 )
 ```
 
-# TODOs:
-Below are a list of TODO items to explore/unpack further:
-- **Dynamic Directories**: Currently, directories are hard coded in the constants module. This should be dynamic for a parent machine.
+
+# Setup and Testing
+## Local Clone
+Below outlines how to clone this repo
+1. Clone repo to local files
+2. Open CMD in cwd
+3. run: `python -m venv venv `
+4. run: `pip install -r requirements.txt`
+5. Update `constants.py` to use your system's absolute path
+6. Insert an openAI API Key into a "secrets.txt" file in the main folder
+7. run: `python -m main.py`
+
+
+## Docker Test
+The pipeline is also available on Docker so you can reproduce and explore the data pipeline on any system. [DockerHub](https://hub.docker.com/repository/docker/jaimiles23/fin_llm_accuracy/general)
+
+[Docker](https://raw.githubusercontent.com/jaimiles23/LLMAnalyticsAccuracy/main/lib/README%20Images/docker.png)
+
+
+Ensure you have [docker installed](https://docs.docker.com/engine/install/). Then, run the following commands in your console:
+```console
+user:~$docker run -it jaimiles23/fin_llm_accuracy:latest /bin/bash
+```
+
+
+**Note**: The .Dockerfile is also hosted on this repository. To build the docker image, run:
+```console
+user:~$docker build -t llm_dir .
+user:~$docker run -it llm_dir /bin/bash
+root@26e003b6a867:/app# python main.py
+```
+
+1. The data pipeline will take ~ 30 seconds to complete
+2. You will need to provide your [open-ai API key](https://platform.openai.com/api-keys)
+3. You may then ask the LLM questions about the database. 
+
+[Docker Test Image](https://raw.githubusercontent.com/jaimiles23/LLMAnalyticsAccuracy/main/lib/README%20Images/LLM_test.png)
 
 
 
-
+# References
+- LangChain. (2023, September 6). LangChain. Retrieved February 2, 2024, from https://blog.langchain.dev/8
+- Papers with Code - MMLU Dataset. (n.d.). Paperswithcode.com. Retrieved February 8, 2024, from https://paperswithcode.com/dataset/mmlu

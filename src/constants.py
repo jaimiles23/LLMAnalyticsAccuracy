@@ -10,8 +10,13 @@ DIR_PATH = os.path.dirname(os.path.dirname(__file__))
 # # Helper Functions 
 # ##########
 def get_dir(relative_path: str) -> str:
-    """Returns the absolute path of the """
-    absolute_path = os.path.join(DIR_PATH, relative_path)
+    """Returns the absolute path of the file.
+    
+    Uses os.path.sep for separation.
+    """
+    # print(os.path.sep)          ## for Docker image too
+    new_relative_path = relative_path.replace('\\', os.path.sep)
+    absolute_path = os.path.join(DIR_PATH, new_relative_path)
     return absolute_path
 
 

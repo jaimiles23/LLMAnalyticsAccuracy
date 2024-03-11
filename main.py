@@ -44,7 +44,6 @@ def run_data_pipeline(reset: bool):
     ##### Setup database
     database_setup.setup_extract_tables(engine)
 
-
     ##### Ingest FDIC Data
     database_funcs.del_recent_update_data(engine)  ## test FDIC API & get data over time
     get_fdic_data.ingest_fdic_api_data(engine)
@@ -68,7 +67,7 @@ def run_data_pipeline(reset: bool):
 ##########
 # Create test dataset
 ##########
-
+## Completed in separate datafile; will require ~$5 to create dataset.
 
 
 ##########
@@ -81,15 +80,13 @@ def ask_llm_questions() -> None:
     return
 
 
-
 ##########
 # Main
 ##########
 def main(reset: bool):
     """ Run data pipeline & LLM questions as needed"""
     run_data_pipeline(reset = reset)
-    # ask_llm_questions()
-    
+    ask_llm_questions()
     return
 
 

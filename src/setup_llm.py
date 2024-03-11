@@ -2,6 +2,7 @@
 ##########
 # Imports
 ##########
+import os 
 
 from langchain_community.utilities import SQLDatabase
 from langchain_experimental.sql import SQLDatabaseChain
@@ -26,12 +27,15 @@ def get_open_api_key() -> str:
     
     To use this, you must create your own "secrets.txt" file with your open API key.
     """
+
+    flag_secrets_exists = os.path.exists(c.FN_SECRETS)
     
-    with open(c.FN_SECRETS, 'r') as f_in:
-        open_api_key = f_in.read()
+    if flag_secrets_exists:
+        with open(c.FN_SECRETS, 'r') as f_in:
+            open_api_key = f_in.read()
+    else:
+        open_api_key = input("Please enter your open_ai API key: ")
     return open_api_key
-
-
 
 
 def get_llm_db_chain():
@@ -50,7 +54,7 @@ def get_llm_db_chain():
     db_chain = SQLDatabaseChain.from_llm(
         llm = llm,
         db = db, 
-        verbose = False,  #True, 
+        verbose = True, # False 
         return_intermediate_steps = True,
         top_k = 1, 
         query_checker_prompt = None, 
