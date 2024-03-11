@@ -5,11 +5,12 @@ An Large Language Models (LLMs) with good accuracy can be leveraged within an or
 2. Connects chatgpt-3.5 to the database
 3. Investigates the accuracy of the LLM vs traditional sql queries. 
 
+**Table of Contents**
 - [LLM Analytics Accuracy](#llm-analytics-accuracy)
 - [Data](#data)
   - [FDIC Data](#fdic-data)
   - [NCUA Data](#ncua-data)
-- [Architecture](#architecture)
+- [System Architecture \& Design](#system-architecture--design)
   - [Tech Stack](#tech-stack)
   - [Data Pipeline](#data-pipeline)
   - [Data Lineage](#data-lineage)
@@ -71,7 +72,7 @@ Custom Query [here](https://webapps2.ncua.gov/CustomQuery/CUSelect.aspx)
 Then, drop the downloaded file into the directory: `data/Data_NCUA/data_to_process/`. After the pipeline ingests the data, it will move the file to `data/Data_NCUA/processed/`
 
 
-# Architecture
+# System Architecture & Design
 
 ## Tech Stack
 This data pipeline uses python and sqlite. 
@@ -126,7 +127,7 @@ Below outlines how to clone this repo
 ## Docker Test
 The pipeline is also available on Docker so you can reproduce and explore the data pipeline on any system. [DockerHub](https://hub.docker.com/repository/docker/jaimiles23/fin_llm_accuracy/general)
 
-[Docker](https://raw.githubusercontent.com/jaimiles23/LLMAnalyticsAccuracy/main/lib/README%20Images/docker.png)
+![Docker](https://raw.githubusercontent.com/jaimiles23/LLMAnalyticsAccuracy/main/lib/README%20Images/docker.png)
 
 
 Ensure you have [docker installed](https://docs.docker.com/engine/install/). Then, run the following commands in your console:
@@ -146,7 +147,7 @@ root@26e003b6a867:/app# python main.py
 2. You will need to provide your [open-ai API key](https://platform.openai.com/api-keys)
 3. You may then ask the LLM questions about the database. 
 
-[Docker Test Image](https://raw.githubusercontent.com/jaimiles23/LLMAnalyticsAccuracy/main/lib/README%20Images/LLM_test.png)
+![Docker Test Image](https://raw.githubusercontent.com/jaimiles23/LLMAnalyticsAccuracy/main/lib/README%20Images/LLM_test.png)
 
 
 
